@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Изменение стилей на suvvy.ai
+// @name         Изменение акцента на suvvy.ai
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  Изменение акцентного цвета
+// @description  Изменение акцента в ЛК Suvvy AI
 // @author       https://github.com/barabum0
 // @match        *://*.suvvy.ai/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=suvvy.ai
@@ -14,37 +14,33 @@
 (function() {
     'use strict';
 
-    // Основной акцентный цвет
-    const accentColor = 'mediumslateblue';
-    // Субакцентный цвет
-    const subAccentColor = 'mediumpurple';
+    // Константа для нового значения оттенка (hue)
+    const accentColorHUE = 270;
 
-    // Функция для изменения стилей элементов
-    function changeStyles() {
-        // Объект с информацией о классах и соответствующих им стилях
-        const classStyles = {
-            'btn-primary': { 'backgroundColor': accentColor, 'borderColor': subAccentColor },
-            'text-primary': { 'color': accentColor },
-            'bg-primary': { 'backgroundColor': accentColor },
-            'inactive': { 'backgroundColor': 'white' },
-            'chat-bubble-primary': { 'backgroundColor': accentColor }
-        };
+    // Функция для изменения CSS-переменных
+    function changeCSSVariables() {
+        // Массив с именами CSS-переменных, которые нужно изменить
+        const variableNames = ['--p', '--s', '--n', '--b2', '--b3'];
 
-        // Проход по всем классам и их стилям
-        for (const [className, styles] of Object.entries(classStyles)) {
-            const elements = document.querySelectorAll(`.${className}`);
-            elements.forEach(element => {
-                for (const [styleName, styleValue] of Object.entries(styles)) {
-                    element.style[styleName] = styleValue;
-                }
-            });
-        }
+        // Получение текущих стилей для корневого элемента
+        const rootStyles = getComputedStyle(document.documentElement);
+
+        // Проход по всем переменным для изменения их значений
+        variableNames.forEach(variableName => {
+            // Получение текущего значения переменной в формате HSL
+            let currentHSLValue = rootStyles.getPropertyValue(variableName).trim();
+
+            // Разбиение текущего значения на составляющие [hue, saturation, lightness]
+            let [currentHue, ...rest] = currentHSLValue.split(/\s+/);
+
+            // Задание нового значения для переменной с сохранением старых составляющих
+            let newHSLValue = [accentColorHUE, ...rest].join(' ');
+
+            // Применение нового значения к CSS-переменной
+            document.documentElement.style.setProperty(variableName, newHSLValue);
+        });
     }
 
-    // Вызов функции для первичного применения стилей
-    changeStyles();
-
-    // Наблюдение за изменениями DOM и применение стилей при изменениях
-    const observer = new MutationObserver(changeStyles);
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Вызов функции для изменения CSS-переменных
+    changeCSSVariables();
 })();
