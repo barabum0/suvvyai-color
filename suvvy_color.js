@@ -20,7 +20,7 @@
     // Функция для изменения CSS-переменных
     function changeCSSVariables() {
         // Массив с именами CSS-переменных, которые нужно изменить
-        const variableNames = ['--p', '--s', '--n', '--b2', '--b3'];
+        const variableNames = ['--p', '--s', '--n', '--b2', '--b3', '--pf'];
 
         // Получение текущих стилей для корневого элемента
         const rootStyles = getComputedStyle(document.documentElement);
